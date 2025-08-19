@@ -11,7 +11,9 @@ export default function StaffDashboard() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { if (!user) navigate("/login"); }, [user, navigate]);
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user, navigate]);
 
   async function load() {
     try {
@@ -20,9 +22,14 @@ export default function StaffDashboard() {
       setRows(data || []);
     } catch {
       setAlert({ type: "error", message: "Failed to load appointments" });
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }
-  useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    load();
+  }, []);
 
   async function updateStatus(id, status) {
     try {
@@ -42,56 +49,88 @@ export default function StaffDashboard() {
   return (
     <div className="dashboard-container">
       {alert && <Alert type={alert.type} message={alert.message} />}
+
+      {/* Header */}
       <div className="dashboard-header">
         <h2>Staff Dashboard - {user?.department}</h2>
-        <button onClick={logout}>Logout</button>
+        <button className="logout-btn" onClick={logout}>
+          <i className="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
 
-      <table className="appointments-table">
-        <thead>
-          <tr>
-            <th>Patients</th>
-            <th>Department</th>
-            <th>Date & Time</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
+      {/* Table */}
+      <div className="table-container">
+        <table className="appointments-table">
+          <thead>
             <tr>
-              <td colSpan="5">Loading…</td>
+              <th>Patients</th>
+              <th>Department</th>
+              <th>Date & Time</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ) : rows.length === 0 ? (
-            <tr>
-              <td colSpan="5">No appointment requests found</td>
-            </tr>
-          ) : (
-            rows.map((appt) => (
-              <tr key={appt._id}>
-                <td>
-                  {appt.firstName} {appt.lastName}
-                </td>
-                <td>
-                  {typeof appt.department === "string"
-                    ? appt.department
-                    : appt.department?.name}
-                </td>
-                <td>{new Date(appt.appointmentDateTime).toLocaleString()}</td>
-                <td>{appt.status}</td>
-                <td>
-                  <button onClick={() => updateStatus(appt._id, "approved")}>
-                    Approve
-                  </button>
-                  <button onClick={() => updateStatus(appt._id, "rejected")}>
-                    Reject
-                  </button>
-                </td>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan="5">Loading…</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : rows.length === 0 ? (
+              <tr>
+                <td colSpan="5">No appointment requests found</td>
+              </tr>
+            ) : (
+              rows.map((appt) => (
+                <tr key={appt._id}>
+                  <td>
+                    <div className="patient-info">
+                      <span className="patient-name">
+                        {appt.firstName} {appt.lastName}
+                      </span>
+                      <span className="patient-contact">
+                        {appt.email || appt.phone}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    {typeof appt.department === "string"
+                      ? appt.department
+                      : appt.department?.name}
+                  </td>
+                  <td>{new Date(appt.appointmentDateTime).toLocaleString()}</td>
+                  <td>
+                    <span className={`status-${appt.status || "pending"}`}>
+                      {appt.status || "pending"}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button>Change Status</button>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        className="approve-btn"
+                        onClick={() => updateStatus(appt._id, "approved")}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="reject-btn"
+                        onClick={() => updateStatus(appt._id, "rejected")}
+                      >
+                        Reject
+                      </button>
+                      <button className="view-btn">View</button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
