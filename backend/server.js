@@ -14,6 +14,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   'https://main.dsqo2q3l6bl5h.amplifyapp.com/',
+   'https://main.dsqo2q3l6bl5h.amplifyapp.com/',
   'http://localhost:3000'
 ];
 
