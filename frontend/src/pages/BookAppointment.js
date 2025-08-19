@@ -8,7 +8,6 @@ export default function BookAppointment() {
   const [alert, setAlert] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Set minimum datetime to "now"
   useEffect(() => {
     const input = document.getElementById("preferredDateTime");
     if (input) {
@@ -21,7 +20,6 @@ export default function BookAppointment() {
   async function handleSubmit(e) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-
     const payload = {
       firstName: f.get("firstName"),
       lastName: f.get("lastName"),
@@ -34,7 +32,7 @@ export default function BookAppointment() {
       departmentName: f.get("department"),
       appointmentDateTime: f.get("preferredDateTime"),
       reason: f.get("symptoms"),
-      symptoms: f.get("symptoms"),
+      symptoms: f.get("symptoms")
     };
 
     try {
@@ -44,11 +42,7 @@ export default function BookAppointment() {
       e.currentTarget.reset();
       setTimeout(() => navigate("/"), 900);
     } catch (err) {
-      setAlert({
-        type: "error",
-        message:
-          err?.response?.data?.message || "Could not submit appointment",
-      });
+      setAlert({ type: "error", message: err?.response?.data?.message || "Could not submit appointment" });
     } finally {
       setSubmitting(false);
     }
@@ -68,7 +62,7 @@ export default function BookAppointment() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="appointment-content">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>First Name *</label>
           <input type="text" name="firstName" required />
@@ -98,41 +92,30 @@ export default function BookAppointment() {
           <input type="text" name="address" required />
         </div>
         <div className="form-group">
-          <label>Department *</label>
-          <select name="department" required>
-            <option value="">Select Department</option>
-            <option>Cardiology</option>
-            <option>Neurology</option>
-            <option>Orthopedics</option>
-            <option>Pediatrics</option>
-            <option>Dermatology</option>
-            <option>Radiology</option>
-            <option>Emergency</option>
-          </select>
+        <label>Department *</label>
+        <select name="department" className="department-select" required>
+          <option value="">Select Department</option>
+          <option>Cardiology</option>
+          <option>Neurology</option>
+          <option>Orthopedics</option>
+          <option>Pediatrics</option>
+          <option>Dermatology</option>
+          <option>Radiology</option>
+          <option>Emergency</option>
+        </select>
         </div>
+
         <div className="form-group">
           <label>Date & Time *</label>
-          <input
-            type="datetime-local"
-            id="preferredDateTime"
-            name="preferredDateTime"
-            required
-          />
+          <input type="datetime-local" id="preferredDateTime" name="preferredDateTime" required />
         </div>
         <div className="form-group">
           <label>Symptoms *</label>
           <textarea name="symptoms" required></textarea>
         </div>
-
-        <div className="submit-section">
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={submitting}
-          >
-            {submitting ? "Submitting..." : "Submit"}
-          </button>
-        </div>
+        <button type="submit" disabled={submitting} className="submit-btn">
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
       </form>
     </div>
   );

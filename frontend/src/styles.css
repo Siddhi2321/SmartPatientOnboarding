@@ -1233,3 +1233,43 @@ body::before {
     transform: translateY(-2px);
 }
 
+.footer-card {
+  margin-top: 2rem;        /* space above */
+  padding: 1rem;
+  text-align: center;
+  background: #516a98;     /* lighter background */
+  border-radius: 12px;
+  font-size: 0.9rem;       /* smaller text */
+  color: #333;
+  box-shadow: 0 2px 6px rgb(48, 40, 105);
+}
+
+.footer-card i {
+  font-size: 1.5rem;
+  color: #d9534f;          /* hospital theme red */
+  margin-bottom: 0.5rem;
+}
+
+.footer-card h4 {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+/* Only affects the chosen text in the Department dropdown */
+.department-select {
+  color: #111; /* dark text */
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 1rem;
+}
+
+/* Keeps the dropdown options readable (optional) */
+.department-select option {
+  color: #000; /* black text inside dropdown */
+  background: #fff; /* white dropdown background */
+}
+
+
