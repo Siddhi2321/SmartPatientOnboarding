@@ -13,6 +13,15 @@ const AppointmentSchema = new mongoose.Schema({
         ref: 'Patient',
         required: true,
     },
+    age: {
+        type: Number,
+        required: [true, 'Age is required at the time of booking'],
+    },
+    gender: {
+        type: String,
+        required: [true, 'Gender is required at the time of booking'],
+        enum: ['Male', 'Female', 'Other'],
+    },
     department: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Department',

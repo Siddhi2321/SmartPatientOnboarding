@@ -2,7 +2,6 @@ const Appointment = require('../models/Appointment');
 const Patient = require('../models/Patient');
 const Department = require('../models/Department');
 
-// @desc    Create a new appointment
 // @route   POST /api/appointments
 // @access  Public
 const createAppointment = async (req, res) => {
@@ -12,6 +11,7 @@ const createAppointment = async (req, res) => {
         email,
         phone,
         dateOfBirth,
+        gender,
         address,
         emergencyContact,
         departmentName,
@@ -19,14 +19,16 @@ const createAppointment = async (req, res) => {
         reason
     } = req.body;
 
+    if (!gender) {
+        return res.status(400).json({ message: 'Gender is a required field.' });
+    }
+
     try {
-        // Find the department
         const department = await Department.findOne({ name: departmentName });
         if (!department) {
             return res.status(404).json({ message: 'Department not found' });
         }
 
-        // Check if patient exists, if not, create one
         let patient = await Patient.findOne({ email });
         if (!patient) {
             patient = await Patient.create({
@@ -35,14 +37,24 @@ const createAppointment = async (req, res) => {
                 email,
                 phone,
                 dateOfBirth,
+                gender,
                 address,
                 emergencyContact
             });
         }
 
-        // Create the appointment
+        const dob = new Date(dateOfBirth);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDifference = today.getMonth() - dob.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
         const appointment = await Appointment.create({
             patient: patient._id,
+            age: age,            
+            gender: patient.gender,
             department: department._id,
             appointmentDateTime,
             reason,
@@ -56,6 +68,9 @@ const createAppointment = async (req, res) => {
 
     } catch (error) {
         console.error(error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
         res.status(500).json({ message: `Server Error: ${error.message}` });
     }
 };
@@ -76,7 +91,6 @@ const getDepartmentAppointments = async (req, res) => {
     }
 };
 
-// @desc    Update appointment status (approve/reject)
 // @route   PUT /api/appointments/:id/status
 // @access  Private/Staff
 const updateAppointmentStatus = async (req, res) => {
@@ -101,7 +115,7 @@ const updateAppointmentStatus = async (req, res) => {
     }
 };
 
-// @desc    Update medical record for an appointment
+
 // @route   PUT /api/appointments/:id/record
 // @access  Private/Staff
 const updateMedicalRecord = async (req, res) => {

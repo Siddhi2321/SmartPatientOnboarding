@@ -12,7 +12,23 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://main.dsqo2q3l6bl5h.amplifyapp.com/',
+  'http://localhost:3000'
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 
@@ -26,6 +42,8 @@ app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/appointments', require('./routes/appointmentRoutes'));
 app.use('/api/departments', require('./routes/departmentRoutes'));
 app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+
+app.use('/api/verification', require('./routes/verificationRoutes'));
 
 
 const PORT = process.env.PORT || 5001;
